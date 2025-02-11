@@ -1,0 +1,131 @@
+#!/usr/bin/env php
+<?php
+
+$query = <<<SQL
+SELECT r.type, a.state, p.pmid, p.metadata
+FROM runs AS r, publications AS p, associations AS a
+WHERE r.id = a.run_id AND p.pmid = a.pmid
+SQL;
+
+$pdo = new PDO($db_url, $db_username, $db_password);
+
+$stmt = $pdo->prepare($query);
+
+$stmt->execute();
+
+while ($row = $stmt->fetch()) {
+  ['type' => $type, 'state' => $state, 'pmid' => $pmid] = $row;
+
+  echo json_encode([
+    'type' => $type,
+    'pmid' => $pmid,
+    'is_selected' => $state == "curated" || $state == "selected",
+  ] + parse_metadata($row['metadata'])) . "\n";
+}
+
+function parse_metadata(string $metadata = null): array
+{
+    $default = [
+        'title' => '',
+        'journal' => '',
+        'abstract' => [],
+        'authors' => [],
+    ];
+
+    try {
+        $metadata = is_null($metadata) ? [] : json_decode($metadata, true);
+
+        if (key_exists('PubmedArticle', $metadata)) {
+            return array_merge($default, parse_article($metadata['PubmedArticle']['MedlineCitation']));
+        }
+
+        if (key_exists('PubmedBookArticle', $metadata)) {
+            return array_merge($default, parse_book($metadata['PubmedBookArticle']['BookDocument']));
+        }
+
+        return $default;
+    }
+
+    catch (Throwable $e) {
+        return $default;
+    }
+}
+
+function parse_article(array $metadata): array
+{
+    return [
+        'title' => parse_title($metadata['Article']['ArticleTitle'] ?? ''),
+        'journal' => parse_journal($metadata['Article']['Journal']['Title'] ?? ''),
+        'abstract' => parse_abstract($metadata['Article']['Abstract'] ?? $metadata['OtherAbstract'] ?? []),
+        'authors' => parse_authors($metadata['Article']['AuthorList'] ?? []),
+    ];
+}
+
+function parse_book(array $metadata): array
+{
+    return [
+        'title' => parse_title($metadata['ArticleTitle'] ?? ''),
+        'journal' => parse_journal($metadata['Book']['BookTitle'] ?? ''),
+        'abstract' => parse_abstract($metadata['Abstract']),
+        'authors' => parse_authors($metadata['AuthorList'] ?? []),
+    ];
+}
+
+function parse_title(mixed $title): string
+{
+    return is_string($title) ? $title : '';
+}
+
+function parse_journal(mixed $journal): string
+{
+    return is_string($journal) ? $journal : '';
+}
+
+function parse_abstract(array $abstract): array
+{
+    $text = $abstract['AbstractText'] ?? null;
+
+    if (is_string($text)) {
+        return [$text];
+    }
+
+    if (is_array($text)) {
+        return array_filter($text, 'is_string');
+    }
+
+    return ['No abstract'];
+}
+
+function parse_authors(array $list): array
+{
+    $authors = $list['Author'] ?? [];
+
+    if (count($authors) == 0) {
+        return ['No author'];
+    }
+
+    if (key_exists('CollectiveName', $authors)) {
+        return [$authors['CollectiveName']];
+    }
+
+    try {
+        return array_map("parse_author", $authors);
+    }
+
+    catch (TypeError $e) {
+        return [parse_author($authors)];
+    }
+}
+
+function parse_author(array $author): string
+{
+    if (key_exists('LastName', $author) && key_exists('Initials', $author)) {
+        return sprintf('%s %s', $author['LastName'], $author['Initials']);
+    }
+
+    if (key_exists('CollectiveName', $author)) {
+        return $author['CollectiveName'];
+    }
+
+    return '';
+}
