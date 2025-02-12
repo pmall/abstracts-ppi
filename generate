@@ -1,13 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+# the original formatting of the abstracts was is PHP.
+
+$pdo = new PDO($db_url, $db_username, $db_password);
+
 $query = <<<SQL
 SELECT r.type, a.state, p.pmid, p.metadata
 FROM runs AS r, publications AS p, associations AS a
 WHERE r.id = a.run_id AND p.pmid = a.pmid
 SQL;
-
-$pdo = new PDO($db_url, $db_username, $db_password);
 
 $stmt = $pdo->prepare($query);
 
