@@ -1,6 +1,6 @@
 # Fine-Tuning a Language Model for Text Classification Using Hugging Face
 
-## Context
+## Context
 
 ...
 
@@ -12,7 +12,7 @@
 
 ...
 
-## Results
+## Results
 
 ...
 
