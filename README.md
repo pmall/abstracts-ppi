@@ -8,7 +8,7 @@ This project explores the process of fine-tuning an existing language model usin
 
 ### Dataset
 
-The dataset originates from my previous research team, which focused on human-viral protein-protein interactions (PPIs). The results of this work have been described in a [scientific publication](https://pubmed.ncbi.nlm.nih.gov/38252831/).
+The dataset originates from my previous research team, which studied human-viral protein-protein interactions (PPIs). It was developed as part of this research and served as the foundation for a [scientific publication](https://pubmed.ncbi.nlm.nih.gov/38252831/).
 
 The dataset consists of approximately **80,000 scientific abstracts**, categorized into two classes:
 
