@@ -34,6 +34,14 @@ The objective is to fine-tune an existing language model to serve as a **binary 
 
 Given that the PPI curation process aims to be **exhaustive**, the cost of a **false negative** (missing a relevant publication) is much higher than that of a **false positive** (which will be filtered out later during the curation step). Therefore, the classifier must achieve both **high recall** and **strong precision**, ensuring a high **F1 score** for reliable performance.
 
+### Project Notebooks
+
+The code and experiments for this project are organized into the following notebooks:
+
+- [Dataset Preparation](./notebooks/0_preparation.ipynb)
+- [Model Training](./notebooks/1_training.ipynb)
+- [Evaluation](./notebooks/2_evaluation.ipynb)
+
 ## Methods
 
 ### Dataset Preparation
