@@ -3,6 +3,10 @@
 
 # the original formatting of the abstracts was is PHP.
 
+#$db_url = "pgsql:host=localhost;port=5432;dbname=drakkar_complete";
+#$db_username = "pmall";
+#$db_password = "";
+
 $pdo = new PDO($db_url, $db_username, $db_password);
 
 $query = <<<SQL
