@@ -18,7 +18,7 @@ The dataset consists of approximately **80,000 scientific abstracts**, categoriz
 The dataset was constructed over several years through the following steps:
 
 1. **Querying:** A broad search query was run monthly on pubmed to retrieve all publications that could potentially describe a PPI, yielding a few thousand abstracts each time.
-2. **Precuration:** Biologist curators manually reviewed each new batch of abstracts, a process that took a few days for every query result.
+2. **Precuration:** Biologist curators manually reviewed each new batch of abstracts, a process that took a few days every time.
 3. **Curation:** Curators analyzed the full text of selected publications, extracting all described PPIs and flagging any false positives that had passed the precuration step.
 
 This process resulted in a **highly imbalanced dataset**:
